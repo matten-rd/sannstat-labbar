@@ -55,6 +55,30 @@ N = 1e4;
 y = exprnd(mu, N, 1);
 mean(y)
 
+%% Problem 4: Monte Carlo-skattning av talet pi
+clear variables; clc; clf;
+%{
+    Generera vektorerna U och V med slumptal i intervallet (-1, 1) och
+    plotta dessa punkter
+    Plotta enhetscirkeln
+    Generera vektorn Z där varje element får värdet 1 om det ligger
+    innanför enhetscirkeln och 0 om det ligger utanför, beräkna sedan
+    medelvärdet och gångra med 4 för att får en skattning av pi
+    
+    Öka N för en mer noggrann skattning
+%}
+
+N = 1e3;
+U = 2*rand(1,N)-1;          % Genererar U(-1,1)-fördelade slumptal
+V = 2*rand(1,N)-1;
+plot(U,V,'o'), hold on      % Plottar de genererade punkterna
+X = -1:0.01:1;
+plot(X, sqrt(1-X.^2), 'r')  % Plottar enhetscirkeln
+plot(X, -sqrt(1-X.^2), 'r')
+Z = (sqrt(U.^2+V.^2) <= 1); % Beräknar närmevärde på pi
+pi = 4*mean(Z)
+
+
 
 
 
