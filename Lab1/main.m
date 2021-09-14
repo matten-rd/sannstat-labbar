@@ -56,3 +56,5 @@ y = exprnd(mu, N, 1);
 mean(y)
 
 
+
+
