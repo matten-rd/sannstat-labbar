@@ -1,4 +1,4 @@
-%% Problem 1: Simulering av exponentialfordelade slumptal
+%% Problem 1: Simulering av exponentialfördelade slumptal
 clear variables; clc; clf;
 %{ 
     Genererar N stycken Exp(1/10)-fördelade slumptal
@@ -41,4 +41,18 @@ for k = 1:M
     xlabel(num2str(k)), pause(0.001)
 end
 legend('Sant \mu', 'Skattning av \mu')
+
+%% Problem 3: Väntevarde av exp.fördelad stokastisk variabel
+clear variables; clc;
+%{ 
+    Sätt väntevärdet mu till vad som helst och variera N
+    Medelvärdet av N antal exponetialfördelande stokastiska
+    variabler blir då relativt nära mu om N är stort och inte så nära om N
+    är litet
+%}
+mu = 15;                
+N = 1e4;
+y = exprnd(mu, N, 1);
+mean(y)
+
 
