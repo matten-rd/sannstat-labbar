@@ -100,6 +100,34 @@ P_X3_1 = expcdf(3, mu_exp)
 P_X3_2 = 1 - expcdf(7, mu_exp)
 P_x3_3 = expcdf(4, mu_exp) - expcdf(3, mu_exp)
 
+%% Problem 6: Visualisering av sannolikhetsfördelningar
+% Problem 6: Täthetsfunktion för normalfördelning
+clear variables; clc; clf;
+mu = 0;
+sigma = 1;
+dx = 0.01;
+x = -10:dx:10; 
+y = normpdf(x, mu, sigma);
+figure(1)
+plot(x,y)
+
+% Problem 6: Täthetsfunktion för gammafördelning
+dx = 0.01;
+x = 0:dx:10; 
+y = gampdf(x,1,2);
+figure(2)
+plot(x,y), hold on
+z = gampdf(x,5,1);
+plot(x,z,'r')
+
+% Problem 6: Fördelningsfunktion för gammafördelning
+dx = 0.01;
+x = 0:dx:10;
+y = gamcdf(x,1,2);
+figure(3)
+plot(x,y), hold on
+z = gamcdf(x,5,1);
+plot(x,z,'r')
 
 
 
