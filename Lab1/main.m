@@ -78,6 +78,30 @@ plot(X, -sqrt(1-X.^2), 'r')
 Z = (sqrt(U.^2+V.^2) <= 1); % Beräknar närmevärde på pi
 pi = 4*mean(Z)
 
+%% Problem 5: Beräkning av sannolikheter
+clear variables; clc;
+%{
+    Allmänt: 
+        XXXcdf är fördelningsfunktionen [ F_X(x), P(X <= x) ]
+        XXXpdf är täthetsfunktionen [ f_X(x) ]          
+%}
+
+P_X1_1 = binocdf(3, 10, 0.3)
+P_X1_2 = 1 - binocdf(7, 10, 0.3)
+P_x1_3 = binocdf(4, 10, 0.3) - binocdf(3, 10, 0.3)
+
+P_X2_1 = normcdf(3, 5, 3)
+P_X2_2 = 1 - normcdf(7, 5, 3)
+P_x2_3 = normcdf(4, 5, 3) - normcdf(3, 5, 3)
+
+lambda_exp = 7;
+mu_exp = 1/lambda_exp; % Väntevärdet för exp. fördelning
+P_X3_1 = expcdf(3, mu_exp)
+P_X3_2 = 1 - expcdf(7, mu_exp)
+P_x3_3 = expcdf(4, mu_exp) - expcdf(3, mu_exp)
+
+
+
 
 
 
