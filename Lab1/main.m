@@ -16,3 +16,29 @@ t = linspace(0, 100, N/10);     % Vektor med N/10 punkter
 hold on
 plot(t, exppdf(t, mu), 'r')     % exppdf är täthetsfunktionen
 hold off
+
+%% Problem 2: Stora talens lag
+clear variables; clc; clf;
+%{ 
+    Plottar linje av rikiga väntevärdet
+    Beräknar medelvärdet av n antal exponetialfördelande stokastiska
+    variabler där n börjar vid 1 och går till 500 och plottar den punkten
+    Man ser då att när n blir större så närmar sig medelvärdet riktiga
+    väntevärdet
+%}
+mu = 0.5;
+M = 500;
+X = exprnd(mu, M, 1);
+plot(ones(M, 1)*mu, 'r-.')
+hold on
+for k = 1:M
+    plot(k, mean(X(1:k)), '.')
+%     % Det här funkar men suger för hastighet
+%     if k == 1         
+%         % Lägg bara till legend först loopen och ta inte med data1...dataM
+%         legend('Sant \mu', 'Skattning av \mu', 'AutoUpdate', 'off')
+%     end
+    xlabel(num2str(k)), pause(0.001)
+end
+legend('Sant \mu', 'Skattning av \mu')
+
