@@ -129,6 +129,18 @@ plot(x,y), hold on
 z = gamcdf(x,5,1);
 plot(x,z,'r')
 
+%% Problem 7: Multivariat normalfördelning
+%{ 
+    Generalisering av den endimensionella normalfördelningen för högre
+    dimensioner
+%}
+clear variables; clc; clf;
+mux = 0;        % Alla reella värden, flyttar centrum till denna x-koord (väntevärdet i x-led)
+muy = -2;       % Alla reella värden, flyttar centrum till denna y-koord (väntevärdet i y-led)
+sigmax = 1;     % Alla positiva värden, typ nån spridning i x-led (standardavvikelsen i x-led)
+sigmay = 4;     % Alla positiva värden, typ nån spridning i y-led (standardavvikelsen i y-led)
+rho = 0.7;      % Alla värden på intervallet (-1, 1), nån form av rotation kring z-axeln
+plot_mvnpdf(mux, muy, sigmax, sigmay, rho)
 
 
 
