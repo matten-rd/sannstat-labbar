@@ -44,3 +44,32 @@ axis([b1 b2 0 101]) % Tar bort outnyttjat utrymme i figuren
 % Ritar ut det sanna värdet
 plot([mu mu], [0 101], 'g')
 hold off
+
+
+
+%% Problem 2: Maximum likelihood/Minsta kvadrat
+%{
+    - skattning av b med ML- och MK-skattning
+    - båda skattningarna blir bra
+    - täthetsfunktionen följer rayleighfördelningen bra
+%}
+clc; clear variables; clf;
+M = 1e4;
+b = 4;
+x = raylrnd(b, [M, 1]);
+hist_density(x, 40)
+hold on
+my_est_ml = sqrt(1/(2*length(x))*sum(x.^2));        % Räknad för hand
+my_est_mk = sqrt(2)/(length(x)*sqrt(pi)) * sum(x);  % Räknad för hand
+plot(my_est_ml, 0, 'r*')
+plot(my_est_mk, 0, 'g*')
+plot(b, 0, 'ro')
+
+plot(0:0.1:10, raylpdf(0:0.1:10, my_est_ml), 'r')
+hold off
+
+
+
+
+
+
