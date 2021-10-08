@@ -46,7 +46,6 @@ plot([mu mu], [0 101], 'g')
 hold off
 
 
-
 %% Problem 2: Maximum likelihood/Minsta kvadrat
 %{
     - skattning av b med ML- och MK-skattning
@@ -59,14 +58,56 @@ b = 4;
 x = raylrnd(b, [M, 1]);
 hist_density(x, 40)
 hold on
-my_est_ml = sqrt(1/(2*length(x))*sum(x.^2));        % Räknad för hand
-my_est_mk = sqrt(2)/(length(x)*sqrt(pi)) * sum(x);  % Räknad för hand
+my_est_ml = sqrt(1/(2*length(x))*sum(x.^2));    % Räknad för hand
+my_est_mk = sqrt(2/pi) * sum(x)/length(x);      % Räknad för hand
+% Plotta skattningarna och b
 plot(my_est_ml, 0, 'r*')
 plot(my_est_mk, 0, 'g*')
 plot(b, 0, 'ro')
 
+% Plotta täthetsfunktionen
 plot(0:0.1:10, raylpdf(0:0.1:10, my_est_ml), 'r')
 hold off
+
+
+%% Problem 3: Konfidensintervall för Rayleighfördelning
+%{
+    - MK-skatting och approximativt konfidensintervall
+    - Konf. intervall gjort enligt paragraf 12.3
+    - Medelfelet beräknat på papper (Förberedelseuppgift 2)
+    - Täthetsfunktion passar fördelningen bra
+%}
+clc; clear variables; clf;
+load wave_data.mat
+subplot(2,1,1), plot(y(1:end))
+subplot(2,1,2), hist_density(y)
+
+alpha = 0.05;
+n = length(y);
+
+% MK-skattning från Problem 2
+my_est = sqrt(2/pi) * sum(y)/n;
+% Medelfel räknat på papper enligt Förberedelseuppgift 2
+d = sqrt(2/pi * 1/n * (4-pi)/2 * my_est^2); 
+% Beräknar de undre och övre gränserna (paragraf 12.3)
+lower_bound = my_est - norminv(1-alpha/2)*d;
+upper_bound = my_est + norminv(1-alpha/2)*d;
+
+hold on
+% Plotta skattningen och gränserna
+plot(lower_bound, 0, 'g*')
+plot(upper_bound, 0, 'g*')
+plot(my_est, 0, 'ro')
+
+% Plotta täthetsfunktionen
+plot(0:0.1:6, raylpdf(0:0.1:6, my_est), 'r')
+hold off
+
+disp(['Approximativt ', num2str(100*(1-alpha)), '% konfidens intervall'])
+disp(['my_est (MK): ', num2str(my_est)]) 
+disp(['Undre gräns: ', num2str(lower_bound)]) 
+disp(['Övre gräns: ', num2str(upper_bound)]) 
+
 
 
 
