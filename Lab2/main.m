@@ -255,6 +255,58 @@ fprintf('\nAtt moderns längd är N-fördelad förkastas '), if heightJB==0, fpr
 fprintf('\nAtt moderns vikt är N-fördelad förkastas '), if weightJB==0, fprintf("inte"), end
 fprintf('\nAtt barnets vikt är N-fördelad förkastas '), if childWeightJB==0, fprintf("inte"), end
 
+%% Problem 6: Enkel linjär regression - Moores lag
+%{
+    - Undersökning av Moores lag för transistorers ytdensitet.
+    - Residualen ser ut att vara N-fördelad, dock något vänster skev.
+    
+    Info om linjär regression:
+    - https://www.mathworks.com/help/matlab/data_analysis/linear-regression.html
+%}
+clc; clear variables; clf; close all; format long g;
+load moore.dat
+
+x = moore(:, 1); % år
+y = moore(:, 2); % transistorer/ytenhet
+
+w = log(y); % logaritmerar för att gå från exponentiellt till linjärt
+
+X = [ones(length(x),1), x]; % Bilda matris för att använda i regress
+
+% Detta är samma som X\w tror jag
+% X\w är MK-skattning och jag tror regress gör samma i det här fallet
+% STATS är en vektor där första elementet är R^2
+[B_hat,~,~,~,STATS] = regress(w, X); % skattning av [beta_0; beta_1]
+
+w_hat = X*B_hat; % skattad modell, w_hat=log(y_hat)=X*B_hat
+
+% Plotta skattningen och riktiga datan
+figure(1)
+plot(x, w)
+hold on
+plot(x, w_hat)
+legend('Riktiga datan', 'Skattning', 'Location', 'best')
+xlabel('År'), ylabel('log(transistorer/ytenhet)')
+
+% Plotta residualen (observerat värde - modellens värde)
+% Ser ut som en något vänster skev N-fördelning
+figure(2)
+res = w-w_hat;
+subplot(2,1,1), normplot(res)
+subplot(2,1,2), hist(res)
+
+% Bestämning av R^2 (Coefficient of determination)
+% Varierar mellan 0-1 och ju högre värdet är desto bättre är modellen
+% (Beräknas enligt: Rsq = 1 - sum((w - w_hat).^2)/sum((w - mean(w)).^2))
+Rsq = STATS(1);
+
+% Funktion för antal transistorer/ytenhet för något år enligt modellen
+yYear = @(year) exp(B_hat(1) + B_hat(2)*year);
+year = 2025;
+fprintf('Prediktion för antalet transistorer år %d: %.0f st/ytenhet \n', year, yYear(2025))
+fprintf('R^2 är %.5f \n', Rsq)
+
+
 
 
 
