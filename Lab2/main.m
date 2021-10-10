@@ -191,7 +191,69 @@ xlabel('Vikt [g]')
 hold off
 
 
+%% Problem 5: Test av normalitet
+%{
+    - Visuell undersökning ger:
+        - Moderns ålder är någorlunda N-fördelade men något höger skev.
+        - Moderns längd ser ut att vara N-fördelad, med viss koncentration
+          kring 160 cm och 170 cm.
+        - Moderns vikt avviker från N-fördelningen vid övre extremen, höger skev.
+        - Barnets vikt avviker från N-fördelningen vid lägre extremen, vänster skev.
+    
+    - Jarque-Beras test vid nivå 5% ger:
+        - Att moderns ålder är N-fördelad förkastas 
+        - Att moderns längd är N-fördelad förkastas inte
+        - Att moderns vikt är N-fördelad förkastas 
+        - Att barnets vikt är N-fördelad förkastas
+%}
+clc; clear variables; clf; close all;
+load birth.dat
 
+age = birth(:, 4);          % Moderns ålder i år
+height = birth(:, 16);      % Moderns längd i cm
+weight = birth(:, 15);      % Moderns vikt i kg
+childWeight = birth(:, 3);  % Barnets vikt i g
+
+% Plotta jämförelse med N-fördelning
+figure(1)
+subplot(2,2,1)
+normplot(age), title('Moderns ålder [år]')
+subplot(2,2,2)
+normplot(height), title("Moderns längd [cm]")
+subplot(2,2,3)
+normplot(weight), title("Moderns vikt [kg]")
+subplot(2,2,4)
+normplot(childWeight), title("Barnets vikt [g]")
+
+% Använd Jarque-Beras test för att avgöra om N-fördelat
+% H_0: att datan är N-fördelad
+% H_1: datan är inte N-fördelad
+% 1 -> förkasta H_0 
+% 0 -> förkasta inte H_0
+alpha = 0.05;
+ageJB = jbtest(age, alpha);
+heightJB = jbtest(height, alpha);
+weightJB = jbtest(weight, alpha);
+childWeightJB = jbtest(childWeight, alpha);
+
+% Plotta täthetsfunktionerna
+% Bara för att se hur de ser ut
+figure(2)
+subplot(2,2,1)
+ksdensity(age), title('Moderns ålder [år]')
+subplot(2,2,2)
+ksdensity(height), title("Moderns längd [cm]")
+subplot(2,2,3)
+ksdensity(weight), title("Moderns vikt [kg]")
+subplot(2,2,4)
+ksdensity(childWeight), title("Barnets vikt [g]")
+
+% Skriv ut resultat av Jarque-Beras testet
+fprintf('Följande gäller för signifikansnivån %d%%:', alpha*100)
+fprintf('\nAtt moderns ålder är N-fördelad förkastas '), if ageJB==0, fprintf("inte"), end
+fprintf('\nAtt moderns längd är N-fördelad förkastas '), if heightJB==0, fprintf("inte"), end
+fprintf('\nAtt moderns vikt är N-fördelad förkastas '), if weightJB==0, fprintf("inte"), end
+fprintf('\nAtt barnets vikt är N-fördelad förkastas '), if childWeightJB==0, fprintf("inte"), end
 
 
 
