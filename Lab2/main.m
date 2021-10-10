@@ -109,6 +109,88 @@ disp(['Undre gräns: ', num2str(lower_bound)])
 disp(['Övre gräns: ', num2str(upper_bound)]) 
 
 
+%% Problem 4: Fördelningar av givna data
+%{
+    - Plottar lådagram och uppskattade täthetsfunktioner för en datamängd
+    - Undersöker hur rökning, motion och alkohol påverkar födelsevikt
+    - För rökare kan man se en ganska tydlig minskning i födelsevikt
+    - Lite motion verkar också i viss mån minska födelsevikten
+    - Alkohol verkar inte ha någon tydlig påverkan på födelsevikt
+%}
+clc; clear variables; clf; close all;
+load birth.dat
+
+% ---- RÖKARE ----
+% Kolla om mamman röker eller ej och plocka ut barnets vikt i x resp y
+% (kolonn 20 är rökning och kolonn 3 är barnets vikt)
+xSmoke = birth(birth(:, 20) < 3, 3);     % Barns vikt för mammor som INTE röker
+ySmoke = birth(birth(:, 20) == 3, 3);    % Barns vikt för mammor som röker
+
+figure('Name','Rökare')
+% Plottar lådagram av datan
+% Visar median, kvartiler och max min värden
+% Notera att max min som stardard inte räknar med för stora avvikelser
+% (värden som diffar mer än 1.5ggr avståndet mellan kvartilerna räknas inte med)
+% (alltså totala variationsbredden som visas är 1.5+1+1.5 ggr av boxen)
+% (För att ta med all data sätt 'whisker' till inf och då måste axis utökas)
+subplot(2,2,1), boxplot(xSmoke), 
+axis([0 2 500 5000]), ylabel('Vikt [g]'), title('Icke-rökare')
+subplot(2,2,2), boxplot(ySmoke), 
+axis([0 2 500 5000]), ylabel('Vikt [g]'), title('Rökare')
+
+% Plottar uppskattningar av täthetsfunkterna för datan (ksdensity)
+subplot(2,2,3:4) 
+[fx, tx] = ksdensity(xSmoke);   % uppskattad täthetsfunktion för icke-rökare
+plot(tx, fx, 'b')               % plottar denna separat för att vara konsekvent
+hold on
+[fy, ty] = ksdensity(ySmoke);   % uppskattad täthetsfunktion för rökare
+plot(ty, fy, 'r')
+legend('Icke-rökare', 'Rökare')
+xlabel('Vikt [g]')
+hold off
+
+% ---- MOTION ----
+% OBS! Det står fel i birth.txt, mycket motion är inte 2 utan 3 i datan
+xExercise = birth(birth(:, 25) == 3, 3); % Mycket motion
+yExercise = birth(birth(:, 25) == 1, 3); % Lite motion
+
+figure('Name','Motion')
+subplot(2,2,1), boxplot(xExercise), 
+axis([0 2 500 5000]), ylabel('Vikt [g]'), title('Mycket motion')
+subplot(2,2,2), boxplot(yExercise), 
+axis([0 2 500 5000]), ylabel('Vikt [g]'), title('Lite motion')
+
+subplot(2,2,3:4) 
+[fx, tx] = ksdensity(xExercise); % uppskattad täthetsfunktion för mycket motion
+plot(tx, fx, 'b')           
+hold on
+[fy, ty] = ksdensity(yExercise); % uppskattad täthetsfunktion för lite motion
+plot(ty, fy, 'r')
+legend('Mycket motion', 'Lite motion')
+xlabel('Vikt [g]')
+hold off
+
+% ---- ALKOHOL ----
+xAlcohol = birth(birth(:, 26) < 2, 3);  % Dricker inte alkohol
+yAlcohol = birth(birth(:, 26) == 2, 3); % Dricker alkohol
+
+figure('Name','Alkohol')
+subplot(2,2,1), boxplot(xAlcohol), 
+axis([0 2 500 5000]), ylabel('Vikt [g]'), title('Dricker inte alkohol')
+subplot(2,2,2), boxplot(yAlcohol), 
+axis([0 2 500 5000]), ylabel('Vikt [g]'), title('Dricker alkohol')
+
+subplot(2,2,3:4) 
+[fx, tx] = ksdensity(xAlcohol); % uppskattad täthetsfunktion för dricker inte
+plot(tx, fx, 'b')           
+hold on
+[fy, ty] = ksdensity(yAlcohol); % uppskattad täthetsfunktion för dricker
+plot(ty, fy, 'r')
+legend('Ej alkohol', 'Alkohol')
+xlabel('Vikt [g]')
+hold off
+
+
 
 
 
