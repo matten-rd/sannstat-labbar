@@ -6,8 +6,8 @@
     - De horisontella strecken visar konfidensintervallen
       (de blå innehåller mu och de röda innehåller inte mu).
 %}
-clc; clear variables; clf;
-% Parametrar:
+clc; clear variables; clf; close all;
+
 n = 25;     % Antal mätningar
 mu = 2;     % Väntevärdet
 sigma = 1;  % Standardavvikelsen
@@ -21,15 +21,11 @@ xbar = mean(x); % vektor med 100 medelvärden.
 undre = xbar - norminv(1-alpha/2)*sigma/sqrt(n);
 ovre = xbar + norminv(1-alpha/2)*sigma/sqrt(n);
 
-% Problem 1: Simulering av konfidensintervall (forts.)
 % Ritar upp alla intervall
-figure(1)
+figure
 hold on
 for k=1:100
-    if ovre(k) < mu 
-        % Rödmarkerar intervall som missar mu
-        plot([undre(k) ovre(k)], [k k], 'r')
-    elseif undre(k) > mu 
+    if ovre(k) < mu || undre(k) > mu
         % Rödmarkerar intervall som missar mu
         plot([undre(k) ovre(k)], [k k], 'r')
     else
@@ -38,8 +34,7 @@ for k=1:100
     end
 end
 % b1 och b2 är bara till för att figuren ska se snygg ut
-b1 = min(xbar - norminv(1 - alpha/2)*sigma/sqrt(n));
-b2 = max(xbar + norminv(1 - alpha/2)*sigma/sqrt(n));
+b1 = min(undre); b2 = max(ovre); % bredden av figuren
 axis([b1 b2 0 101]) % Tar bort outnyttjat utrymme i figuren
 % Ritar ut det sanna värdet
 plot([mu mu], [0 101], 'g')
@@ -52,14 +47,14 @@ hold off
     - båda skattningarna blir bra
     - täthetsfunktionen följer rayleighfördelningen bra
 %}
-clc; clear variables; clf;
+clc; clear variables; clf; close all;
 M = 1e4;
 b = 4;
 x = raylrnd(b, [M, 1]);
 hist_density(x, 40)
 hold on
-my_est_ml = sqrt(1/(2*length(x))*sum(x.^2));    % Räknad för hand
-my_est_mk = sqrt(2/pi) * sum(x)/length(x);      % Räknad för hand
+my_est_ml = sqrt(1/(2*M)*sum(x.^2));    % Räknad för hand
+my_est_mk = sqrt(2/pi) * sum(x)/M;      % Räknad för hand
 % Plotta skattningarna och b
 plot(my_est_ml, 0, 'r*')
 plot(my_est_mk, 0, 'g*')
@@ -77,7 +72,7 @@ hold off
     - Medelfelet beräknat på papper (Förberedelseuppgift 2)
     - Täthetsfunktion passar fördelningen bra
 %}
-clc; clear variables; clf;
+clc; clear variables; clf; close all;
 load wave_data.mat
 subplot(2,1,1), plot(y(1:end))
 subplot(2,1,2), hist_density(y)
@@ -215,7 +210,7 @@ weight = birth(:, 15);      % Moderns vikt i kg
 childWeight = birth(:, 3);  % Barnets vikt i g
 
 % Plotta jämförelse med N-fördelning
-figure(1)
+figure
 subplot(2,2,1)
 normplot(age), title('Moderns ålder [år]')
 subplot(2,2,2)
@@ -238,7 +233,7 @@ childWeightJB = jbtest(childWeight, alpha);
 
 % Plotta täthetsfunktionerna
 % Bara för att se hur de ser ut
-figure(2)
+figure
 subplot(2,2,1)
 ksdensity(age), title('Moderns ålder [år]')
 subplot(2,2,2)
@@ -258,7 +253,7 @@ fprintf('\nAtt barnets vikt är N-fördelad förkastas '), if childWeightJB==0, 
 %% Problem 6: Enkel linjär regression - Moores lag
 %{
     - Undersökning av Moores lag för transistorers ytdensitet.
-    - Residualen ser ut att vara N-fördelad, dock något vänster skev.
+    - Residualerna ser ut att vara N-fördelade med väntevärde 0.
     
     Info om linjär regression:
     - https://www.mathworks.com/help/matlab/data_analysis/linear-regression.html
@@ -281,7 +276,7 @@ X = [ones(length(x),1), x]; % Bilda matris för att använda i regress
 w_hat = X*B_hat; % skattad modell, w_hat=log(y_hat)=X*B_hat
 
 % Plotta skattningen och riktiga datan
-figure(1)
+figure
 plot(x, w)
 hold on
 plot(x, w_hat)
@@ -290,7 +285,7 @@ xlabel('År'), ylabel('log(transistorer/ytenhet)')
 
 % Plotta residualen (observerat värde - modellens värde)
 % Ser ut som en något vänster skev N-fördelning
-figure(2)
+figure
 res = w-w_hat;
 subplot(2,1,1), normplot(res)
 subplot(2,1,2), hist(res)
@@ -366,8 +361,8 @@ y_hat = X*B;          % Skattning av barnets vikt
 % Konfidensintervall (95%) för parametrarna (B) fås i BINT
 % B kan tolkas som hur stor påverkan varje variabel har på barnets vikt.
 % Om man exvis låter två variabler vara fixa och man varierar en kommer den
-% variabelns B_i avgöra hur stor påverkan den har på resultatet. Alltså en
-% gradient med (i det här fallet) tre parametrar.
+% variabelns B_i avgöra hur stor påverkan den har på resultatet. Alltså är 
+% B en gradient med (i det här fallet) tre parametrar.
 % I vår tabell ser vi att:
 % - Rökning (B_2) har en tydlig negativ påverkan på resultatet 
 %   (barnets vikt minskar om man röker)
@@ -378,7 +373,8 @@ y_hat = X*B;          % Skattning av barnets vikt
 parametrar = {'B_0'; 'B_1: Vikt'; 'B_2: Rök'; 'B_3: Alkohol'};
 nedre = BINT(:,1);
 ovre = BINT(:,2);
-tabell = table(parametrar, B, nedre, ovre);
+tabell = table(B, [nedre, ovre], 'RowNames', parametrar, ...
+    'VariableNames', {'B', '95% konfidensintervall'});
 disp(tabell)
 
 % Plotta residualerna (R=y-y_hat)
