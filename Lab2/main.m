@@ -307,6 +307,87 @@ fprintf('Prediktion för antalet transistorer år %d: %.0f st/ytenhet \n', year,
 fprintf('R^2 är %.5f \n', Rsq)
 
 
+%% Problem 7: Multipel linjär regression
+%{
+    - Gör först en enkel linjär modell av hur moderns längd påverkar
+      barnets vikt, detta verkar inte har någon stark korrelation.
+
+    - Sedan ger multipel linjär regressionen följande:
+    - B vektorn kan tolkas som gradienten för denna modell.
+    - I vår tabell ser vi att:
+        - Rökning (B_2) har en tydlig negativ påverkan på resultatet 
+          (barnets vikt minskar om man röker)
+        - Moderns vikt (B_1) påverkar resultatet positivt något 
+          (barnets vikt ökar om modern väger mer)
+        - Alkohol (B_3) går inte riktigt att säga hur det påverkar eftersom
+          konfidensintervallet är mycket brett och varierar från - till +
+    - Residualerna är N-fördelade med väntevärde 0 vilket var förväntat, 
+      detta är liksom ett antagande man gör för linjär regression.
+      Om residualerna inte är N-fördelade kan man ifrågasätta sin analys
+      just eftersom N-fördelade residualer är ett antagande man gör
+      regressionsanalys. 
+      Eftersom de är N-fördelade kan man anta att modellen är ok.
+      OBS: N-fördelnings antagandet handlar om oobserverbara fel (därav 
+      behovet av ett antagande) och inte om observerbara residualer men 
+      residualerna används för att testa antagandet att felen är N-fördelade.
+      (Läs mer här: https://stats.stackexchange.com/a/54562)
+%}
+clc; clear variables; clf; close all; format short g;
+load birth.dat
+
+% --- ENKEL LINJÄR MODELL ---
+xL = birth(:,16);   % Moderns längd
+yL = birth(:,3);    % Barnets vikt
+
+XL = [ones(length(xL),1), xL];
+B_hat = regress(yL, XL);
+yL_hat = XL*B_hat;  % Skattning av barnets vikt
+
+% Plotta skattningen och riktiga datan
+figure
+scatter(xL, yL)
+hold on
+plot(xL, yL_hat)
+legend('Riktiga datan', 'Skattning', 'Location', 'best')
+xlabel('Moderns längd [cm]'), ylabel('Barnets vikt [g]')
+title('Enkel linjär modell')
+
+% --- MULTIPEL LINJÄR MODELL ---
+x = birth(:,15);      % Moderns vikt
+w = birth(:,20)==3;   % Rökvanor (0=icke-rökare eller slutat, 1=röker)
+z = birth(:,26)==2;   % Alkohol (0=dricker inte, 1=dricker)
+
+y = birth(:, 3);      % Barnets vikt
+
+X = [ones(size(x)), x, w, z];
+[B,BINT,R] = regress(y, X);
+y_hat = X*B;          % Skattning av barnets vikt 
+
+% Konfidensintervall (95%) för parametrarna (B) fås i BINT
+% B kan tolkas som hur stor påverkan varje variabel har på barnets vikt.
+% Om man exvis låter två variabler vara fixa och man varierar en kommer den
+% variabelns B_i avgöra hur stor påverkan den har på resultatet. Alltså en
+% gradient med (i det här fallet) tre parametrar.
+% I vår tabell ser vi att:
+% - Rökning (B_2) har en tydlig negativ påverkan på resultatet 
+%   (barnets vikt minskar om man röker)
+% - Moderns vikt (B_1) påverkar resultatet positivt något 
+%   (barnets vikt ökar om modern väger mer)
+% - Alkohol (B_3) går inte riktigt att säga hur det påverkar eftersom
+%   konfidensintervallet är mycket brett och varierar från - till +
+parametrar = {'B_0'; 'B_1: Vikt'; 'B_2: Rök'; 'B_3: Alkohol'};
+nedre = BINT(:,1);
+ovre = BINT(:,2);
+tabell = table(parametrar, B, nedre, ovre);
+disp(tabell)
+
+% Plotta residualerna (R=y-y_hat)
+% Ser ut att vara en N-fördelning med väntevärde 0 (se ovan för tolkning)
+figure
+normplot(R)
+
+
+
 
 
 
