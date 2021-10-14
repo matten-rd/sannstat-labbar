@@ -53,8 +53,8 @@ b = 4;
 x = raylrnd(b, [M, 1]);
 hist_density(x, 40)
 hold on
-my_est_ml = sqrt(1/(2*M)*sum(x.^2));    % Räknad för hand
-my_est_mk = sqrt(2/pi) * sum(x)/M;      % Räknad för hand
+my_est_ml = sqrt(1/(2*M)*sum(x.^2));   % Räknad för hand
+my_est_mk = sqrt(2/pi) * mean(x);      % Räknad för hand
 % Plotta skattningarna och b
 plot(my_est_ml, 0, 'r*')
 plot(my_est_mk, 0, 'g*')
@@ -81,7 +81,7 @@ alpha = 0.05;
 n = length(y);
 
 % MK-skattning från Problem 2
-my_est = sqrt(2/pi) * sum(y)/n;
+my_est = sqrt(2/pi) * mean(y);
 % Medelfel räknat på papper enligt Förberedelseuppgift 2
 d = sqrt(2/pi * 1/n * (4-pi)/2 * my_est^2); 
 % Beräknar de undre och övre gränserna (paragraf 12.3)
@@ -298,7 +298,7 @@ Rsq = STATS(1);
 % Funktion för antal transistorer/ytenhet för något år enligt modellen
 yYear = @(year) exp(B_hat(1) + B_hat(2)*year);
 year = 2025;
-fprintf('Prediktion för antalet transistorer år %d: %.0f st/ytenhet \n', year, yYear(2025))
+fprintf('Prediktion för antalet transistorer år %d: \n%.0f st/ytenhet \n', year, yYear(2025))
 fprintf('R^2 är %.5f \n', Rsq)
 
 
